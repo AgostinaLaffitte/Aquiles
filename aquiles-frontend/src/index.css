@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  
+  --color-aquiles-primary: #FDE047;
+  --color-aquiles-secondary: #0891B2;
+  --color-aquiles-accent: #DB2777;
+  --color-aquiles-neutral: #111827;
+  --color-aquiles-background: #F9FAFB;
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --swiper-theme-color: var(--color-aquiles-primary);
+  --swiper-navigation-size: 24px;
+}
+
+body {
+  /* Usamos los colores que definimos arriba */
+  background-color: var(--color-aquiles-background);
+  color: var(--color-aquiles-neutral);
+  margin: 0;
+  min-height: 100vh;
+}
+
+
+.swiper-button-next, 
+.swiper-button-prev {
+  @apply bg-white/20 backdrop-blur-sm p-8 rounded-full transition-all hover:bg-white/40;
+}
+
+.swiper-pagination-bullet {
+  @apply bg-white opacity-50;
+}
+
+.swiper-pagination-bullet-active {
+  @apply opacity-100 scale-125;
+}

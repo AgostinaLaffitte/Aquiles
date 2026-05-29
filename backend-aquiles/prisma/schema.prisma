@@ -1,0 +1,113 @@
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // <--- ¡ESTA LÍNEA ES LA QUE FALTA!
+}
+
+model Product {
+  id          Int              @id 
+  name        String
+  price       Float
+  description String?
+  images      String[] // Guardaremos las URLs separadas por comas o como JSON
+  isOffer     Boolean          @default(false)
+  offerPrice  Float?
+  categories  Category[]
+  variants    ProductVariant[]
+  orderItems OrderItem[]
+}
+
+model ProductVariant {
+  id        Int     @id @default(autoincrement())
+  name      String  
+  stock     Int     @default(0)
+  price     Float?
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  orderItems OrderItem[]
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  image    String?
+  products Product[]
+}
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique  // Cambiamos username por email, más pro para e-commerce
+  password String
+  role     Role   @default(USER) 
+}
+model Order {
+  id              Int         @id @default(autoincrement())
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  // Datos del Comprador
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  
+  // Datos de Entrega / Envío
+  deliveryMethod  String      // "RETIRO" o "ENVIO"
+  address         String?     // Calle, Número, Piso (Opcional si es retiro)
+  city            String?     // Localidad
+  postalCode      String?     
+  notes           String?     // Notas aclaratorias del cliente (ej: "tocar timbre B")
+
+  // Control Financiero y Estados
+  total           Float
+  status          String      @default("PENDIENTE") // PENDING, PAID, SHIPPED, COMPLETED, CANCELLED
+  paymentMethod   String      // "TRANSFERENCIA", "EFECTIVO", "MERCADOPAGO"
+  paymentId       String?     // Para guardar el ID transaccional de Mercado Pago en el futuro
+
+  items           OrderItem[]
+}
+
+model OrderItem {
+  id              Int            @id @default(autoincrement())
+  quantity        Int
+  priceAtPurchase Float          
+  order           Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId         Int
+  product         Product        @relation(fields: [productId], references: [id])
+  productId       Int
+  variant         ProductVariant? @relation(fields: [variantId], references: [id])
+  variantId       Int?
+}
+model Banner {
+  id          Int      @id @default(autoincrement())
+  title       String?  // Ej: "3 Cuotas sin interés"
+  imageUrl    String   // La URL de la imagen que ellos diseñen
+  link        String?  // A dónde lleva si hacés clic (ej: /productos?category=Bazar)
+  active      Boolean  @default(true)
+  order       Int      @default(0) // Para decidir cuál va primero en el carrusel
+  createdAt   DateTime @default(now())
+}
+model Promotion {
+  id              Int      @id @default(autoincrement())
+  name            String   // Ej: "Especial Textiles"
+  description     String?
+  type            String   // "CANTIDAD" (3x2) o "PORCENTAJE" (20% off)
+  minQuantity     Int      @default(1)
+  discountValue   Float    // Puede ser el % o el precio fijo
+  active          Boolean  @default(true)
+  
+  // Relación opcional: ¿aplica a un producto o a toda una categoría?
+  productId       Int?
+  categoryId      Int?
+}
