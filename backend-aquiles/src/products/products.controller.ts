@@ -4,8 +4,8 @@ import {
   UseInterceptors, UploadedFiles 
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { memoryStorage } from 'multer';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -15,27 +15,24 @@ import { ConfigService } from '@nestjs/config';
 export class ProductsController {
   constructor(
     private readonly productsService: ProductsService,
-    private readonly configService: ConfigService 
+    private readonly configService: ConfigService,
+    private readonly cloudinaryService: CloudinaryService
   ) {}
+  
 
-  @Post()
+@Post()
   @UseInterceptors(FilesInterceptor('files', 10, {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, callback) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        callback(null, `${uniqueSuffix}${extname(file.originalname)}`);
-      },
-    }),
+    storage: memoryStorage(), // Cambiamos diskStorage por memoryStorage
   }))
   async create(
     @Body() createProductDto: CreateProductDto,
     @UploadedFiles() files: Express.Multer.File[]
   ) {
-    const baseUrl = this.configService.getOrThrow<string>('BASE_URL');
-    
+    // Subimos a Cloudinary y obtenemos las URLs
     if (files && files.length > 0) {
-      createProductDto.images = files.map(file => `${baseUrl}/uploads/${file.filename}`);
+      const uploadPromises = files.map(file => this.cloudinaryService.uploadImage(file));
+      const results = await Promise.all(uploadPromises);
+      createProductDto.images = results.map(res => res.secure_url);
     }
 
     return this.productsService.create(createProductDto);
@@ -56,24 +53,18 @@ export class ProductsController {
 
   @Patch(':id')
   @UseInterceptors(FilesInterceptor('files', 10, {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, callback) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        callback(null, `${uniqueSuffix}${extname(file.originalname)}`);
-      },
-    }),
+    storage: memoryStorage(), // Cambiamos diskStorage por memoryStorage
   }))
   async update(
     @Param('id') id: string, 
     @Body() updateProductDto: UpdateProductDto,
     @UploadedFiles() files: Express.Multer.File[]
   ) {
-    const baseUrl = this.configService.getOrThrow<string>('BASE_URL');
-
-    // Si el usuario subió fotos nuevas durante la edición, mapeamos las nuevas URLs dinámicas
+    // Subimos a Cloudinary y obtenemos las URLs
     if (files && files.length > 0) {
-      updateProductDto.images = files.map(file => `${baseUrl}/uploads/${file.filename}`);
+      const uploadPromises = files.map(file => this.cloudinaryService.uploadImage(file));
+      const results = await Promise.all(uploadPromises);
+      updateProductDto.images = results.map(res => res.secure_url);
     }
 
     return this.productsService.update(+id, updateProductDto);

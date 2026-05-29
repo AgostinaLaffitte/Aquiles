@@ -23,14 +23,12 @@ async function bootstrap() {
     forbidNonWhitelisted: true 
   }));
 
-  // 3. Servir archivos estáticos
-  app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
 
   // 4. Escuchar en el puerto
   const port = process.env.PORT || 3000;
   await app.listen(port);
   
-  console.log(` Aquiles Backend corriendo en: http://localhost:${port}`);
+  
   console.log(` CORS habilitado para: ${frontendUrl}`);
 }
 bootstrap();

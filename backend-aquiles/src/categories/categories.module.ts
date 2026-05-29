@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CategoriesController } from './categories.controller';
-import { PrismaModule } from '../prisma/prisma.module'; // Verificá que la ruta sea correcta
+import { PrismaModule } from '../prisma/prisma.module'; 
+import { CloudinaryModule } from '../cloudinary/cloudinary.module'; // Importamos el módulo de Cloudinary
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, CloudinaryModule],
   controllers: [CategoriesController],
   providers: [CategoriesService],
 })

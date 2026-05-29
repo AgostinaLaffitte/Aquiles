@@ -6,40 +6,35 @@ import {
 import { BannersService } from './banners.service';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { memoryStorage } from 'multer'; 
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ConfigService } from '@nestjs/config';
 
 @Controller('banners')
 export class BannersController {
   constructor(
     private readonly bannersService: BannersService,
-    private readonly configService: ConfigService
+    private readonly cloudinaryService: CloudinaryService
   ) {}
-
-  @Post()
-  // Usamos FilesInterceptor limitado a 1 archivo para mantener la simetría con productos
+@Post()
   @UseInterceptors(FilesInterceptor('files', 1, {
-    storage: diskStorage({
-      destination: './uploads',
-      filename: (req, file, callback) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        callback(null, `banner-${uniqueSuffix}${extname(file.originalname)}`);
-      },
-    }),
+    storage: memoryStorage(), 
   }))
   async create(
     @Body() createBannerDto: CreateBannerDto,
     @UploadedFiles() files: Express.Multer.File[]
   ) {
-    const baseUrl = this.configService.getOrThrow<string>('BASE_URL');
-    
-    if (files && files.length > 0) {
-      // Guardamos la URL absoluta idéntica a cómo lo hacés en productos
-      createBannerDto.imageUrl = `${baseUrl}/uploads/${files[0].filename}`;
+    try {
+      if (files && files.length > 0) {
+        const result = await this.cloudinaryService.uploadImage(files[0]);
+        createBannerDto.imageUrl = result.secure_url;
+      }
+      return await this.bannersService.create(createBannerDto);
+    } catch (error) {
+     
+      throw new Error('No se pudo subir la imagen a Cloudinary');
     }
-
-    return this.bannersService.create(createBannerDto);
+  
   }
 
   @Get()

@@ -9,7 +9,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL") // <--- ¡ESTA LÍNEA ES LA QUE FALTA!
+  url      = env("DATABASE_URL") 
 }
 
 model Product {
