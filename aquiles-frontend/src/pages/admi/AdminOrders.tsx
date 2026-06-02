@@ -116,9 +116,9 @@ const performStatusUpdate = async (orderId: number, newStatus: string) => {
 
   const groupedOrders = getGroupedOrders();
 
-  return (
+return (
     <div className="min-h-screen bg-slate-50/50 p-6 relative">
-      {/* Notificación elegante */}
+      {/* Notificación (intacta) */}
       {notification && (
         <div className={`fixed top-6 right-6 z-50 flex items-center gap-3 px-6 py-4 rounded-2xl shadow-xl border animate-in slide-in-from-right-4 ${notification.type === 'success' ? 'bg-white text-emerald-600 border-emerald-100' : 'bg-white text-rose-600 border-rose-100'}`}>
           {notification.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
@@ -127,10 +127,11 @@ const performStatusUpdate = async (orderId: number, newStatus: string) => {
       )}
 
       <div className="max-w-5xl mx-auto space-y-6">
-        <div className="flex justify-between items-end border-b border-slate-200 pb-5">
+        <div className="flex flex-col md:flex-row justify-between md:items-end border-b border-slate-200 pb-5 gap-4">
           <div>
             <h1 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter">Gestión de Órdenes</h1>
-            <div className="flex gap-2 mt-4">
+            {/* AGREGADO: flex-wrap para que no se desborde */}
+            <div className="flex flex-wrap gap-2 mt-4">
               {['TODAS', 'PENDIENTE', 'ENVIADO', 'COMPLETADO', 'CANCELADO'].map(status => (
                 <button key={status} onClick={() => setFilterStatus(status)} className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase transition-all ${filterStatus === status ? 'bg-slate-900 text-white' : 'bg-white border'}`}>
                   {status}
@@ -138,90 +139,115 @@ const performStatusUpdate = async (orderId: number, newStatus: string) => {
               ))}
             </div>
           </div>
-          <button onClick={fetchOrders} className="p-3 bg-white border rounded-xl shadow-sm hover:border-slate-300">
+          <button onClick={fetchOrders} className="p-3 bg-white border rounded-xl shadow-sm hover:border-slate-300 self-start md:self-auto">
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
 
-        {Object.entries(groupedOrders).map(([month, monthOrders]) => (
-          <div key={month} className="space-y-3">
-            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">{month}</h3>
-            <div className="bg-white border rounded-3xl shadow-sm overflow-hidden">
-              <table className="w-full text-left text-sm">
-                <tbody className="divide-y divide-slate-100">
-                  {monthOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="p-5 font-black text-slate-900">#{order.id}</td>
-                      <td className="p-5 font-bold text-slate-700">{order.customerName}</td>
-                      <td className="p-5 text-slate-500">{new Date(order.createdAt).toLocaleDateString()}</td>
-                      <td className="p-5 font-black">{formatPrice(order.total)}</td>
-                      <td className="p-5"><span className={getStatusBadgeClass(order.status)}>{order.status}</span></td>
-                      <td className="p-5 text-center"><button onClick={() => setSelectedOrder(order)} className="p-2 bg-slate-100 rounded-lg hover:bg-slate-200"><Eye size={16}/></button></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        ))}
+     {Object.entries(groupedOrders).map(([month, monthOrders]) => (
+  <div key={month} className="space-y-3">
+    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">{month}</h3>
+    
+    {monthOrders.map((order) => (
+      <div key={order.id} className="space-y-2">
+        {/* VISTA TABLET/DESKTOP: Fila de tabla */}
+        <div className="hidden md:block bg-white border rounded-3xl shadow-sm overflow-hidden">
+          <table className="w-full text-left text-sm">
+            <tbody className="divide-y divide-slate-100">
+              <tr className="hover:bg-slate-50/50 transition-colors">
+                <td className="p-5 font-black text-slate-900">#{order.id}</td>
+                <td className="p-5 font-bold text-slate-700">{order.customerName}</td>
+                <td className="p-5 text-slate-500">{new Date(order.createdAt).toLocaleDateString()}</td>
+                <td className="p-5 font-black">{formatPrice(order.total)}</td>
+                <td className="p-5"><span className={getStatusBadgeClass(order.status)}>{order.status}</span></td>
+                <td className="p-5 text-center">
+                  <button onClick={() => setSelectedOrder(selectedOrder?.id === order.id ? null : order)} className="p-2 bg-slate-100 rounded-lg hover:bg-slate-200">
+                    <Eye size={16}/>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-        <div ref={detailRef}>
-          {selectedOrder && (
-            <div className="bg-white border-2 border-slate-900 rounded-3xl p-8 shadow-2xl mt-8">
-              <div className="flex justify-between items-start mb-8">
-                <div>
-                  <h2 className="text-3xl font-black uppercase italic tracking-tighter">Pedido #{selectedOrder.id}</h2>
-                  <div className="flex items-center gap-3 mt-3">
-                    <button onClick={() => copyInvoiceToClipboard(selectedOrder)} className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-800"><Clipboard size={14} /> Copiar Boleta</button>
-                    <button onClick={() => setSelectedOrder(null)} className="text-xs font-bold text-slate-400 hover:text-slate-900 uppercase">Cerrar</button>
-                  </div>
+        {/* VISTA MOBILE: Tarjeta */}
+        <div className="md:hidden bg-white p-5 rounded-2xl border shadow-sm flex justify-between items-center">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="font-black text-slate-900">#{order.id}</span>
+              <span className={getStatusBadgeClass(order.status)}>{order.status}</span>
+            </div>
+            <p className="font-bold text-sm text-slate-700">{order.customerName}</p>
+            <p className="text-[11px] text-slate-400 font-bold">{formatPrice(order.total)}</p>
+          </div>
+          <button onClick={() => setSelectedOrder(selectedOrder?.id === order.id ? null : order)} className="p-3 bg-slate-50 rounded-xl hover:bg-slate-100 border border-slate-100">
+            <Eye size={18} className="text-slate-600"/>
+          </button>
+        </div>
+
+        {/* DETALLE: Ahora está DENTRO del map, aparece debajo de la orden seleccionada */}
+            {selectedOrder?.id === order.id && (
+              <div ref={detailRef} className="w-full bg-white border-2 border-slate-900 rounded-3xl p-6 shadow-2xl animate-in fade-in slide-in-from-top-2">
+                <div className="flex justify-between items-start mb-6">
+                  <h2 className="text-2xl font-black uppercase italic tracking-tighter">Pedido #{selectedOrder.id}</h2>
+                  {/* AQUÍ AGREGAMOS EL BOTÓN DE COPIAR */}
+                <div className="flex items-center gap-3 mt-2">
+                  <button 
+                    onClick={() => copyInvoiceToClipboard(selectedOrder)} 
+                    className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-[10px] font-bold hover:bg-slate-800"
+                  >
+                    <Clipboard size={12} /> Copiar Boleta
+                  </button>
+                  <button onClick={() => setSelectedOrder(null)} className="text-xs font-bold text-slate-400 hover:text-slate-900 uppercase">Cerrar</button>
+                </div>
+  
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] font-black text-slate-400 uppercase">Estado</span>
-                  <select value={selectedOrder.status} onChange={(e) => handleStatusChange(selectedOrder.id, e.target.value)} className="block mt-1 bg-slate-100 border-none font-bold text-sm rounded-xl p-2 cursor-pointer">
-                    <option value="PENDIENTE">PENDIENTE</option>
-                    <option value="ENVIADO">ENVIADO</option>
-                    <option value="COMPLETADO">COMPLETADO</option>
-                    <option value="CANCELADO">CANCELADO</option>
-                  </select>
+                      <span className="text-[10px] font-black text-slate-400 uppercase">Estado</span>
+                      <select value={selectedOrder.status} onChange={(e) => handleStatusChange(selectedOrder.id, e.target.value)} className="block mt-1 bg-slate-100 border-none font-bold text-sm rounded-xl p-2 cursor-pointer">
+                        <option value="PENDIENTE">PENDIENTE</option>
+                        <option value="ENVIADO">ENVIADO</option>
+                        <option value="COMPLETADO">COMPLETADO</option>
+                        <option value="CANCELADO">CANCELADO</option>
+                      </select>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 space-y-3">
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase flex items-center gap-2"><User size={14} /> Contacto</h3>
-                  <p className="font-black text-lg">{selectedOrder.customerName}</p>
-                  <div className="flex items-center gap-2 text-sm text-slate-600"><Mail size={14}/> {selectedOrder.customerEmail}</div>
-                  <div className="flex items-center gap-2 text-sm text-slate-600"><Phone size={14}/> {selectedOrder.customerPhone}</div>
-                </div>
-                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 space-y-3">
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase flex items-center gap-2"><Truck size={14} /> Envío</h3>
-                  <p className="font-bold">{selectedOrder.deliveryMethod}</p>
-                  <div className="flex items-start gap-2 text-sm text-slate-600"><MapPin size={14} className="mt-1"/> {selectedOrder.address ? `${selectedOrder.address}, ${selectedOrder.city}` : 'Retiro en local'}</div>
-                </div>
-              </div>
-
-              <div className="mt-8 border-t border-slate-100 pt-8">
-                <h3 className="text-[10px] font-black text-slate-400 uppercase mb-4 flex items-center gap-2"><CreditCard size={14} /> Detalle de artículos</h3>
-                <div className="space-y-3">
-                  {selectedOrder.items.map((item: any) => (
-                    <div key={item.id} className="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-100">
-                      <div>
-                        <p className="font-bold text-sm">{item.product.name}</p>
-                        <p className="text-[11px] text-slate-400">Var: {item.variant?.name || 'Única'} | Cant: {item.quantity}</p>
-                      </div>
-                      <span className="font-black">{formatPrice(Number(item.priceAtPurchase) * Number(item.quantity))}</span>
+                  
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 space-y-3">
+                      <h3 className="text-[10px] font-black text-slate-400 uppercase flex items-center gap-2"><User size={14} /> Contacto</h3>
+                      <p className="font-black text-lg truncate">{selectedOrder.customerName}</p>
+                      <div className="flex items-center gap-2 text-sm text-slate-600"><Mail size={14}/> {selectedOrder.customerEmail}</div>
+                      <div className="flex items-center gap-2 text-sm text-slate-600"><Phone size={14}/> {selectedOrder.customerPhone}</div>
                     </div>
-                  ))}
-                </div>
-                <div className="mt-6 flex justify-between items-center bg-slate-900 text-white p-6 rounded-2xl shadow-xl">
-                  <span className="font-black uppercase tracking-widest text-sm opacity-80">Total del pedido</span>
-                  <span className="text-2xl font-black">{formatPrice(selectedOrder.total)}</span>
-                </div>
+                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 space-y-3">
+                      <h3 className="text-[10px] font-black text-slate-400 uppercase flex items-center gap-2"><Truck size={14} /> Envío</h3>
+                      <p className="font-bold">{selectedOrder.deliveryMethod}</p>
+                      <div className="flex items-start gap-2 text-sm text-slate-600"><MapPin size={14} className="mt-1"/> {selectedOrder.address ? `${selectedOrder.address}, ${selectedOrder.city}` : 'Retiro en local'}</div>
+                    </div>
+                </div><div className="mt-8 border-t border-slate-100 pt-8">
+                    <h3 className="text-[10px] font-black text-slate-400 uppercase mb-4 flex items-center gap-2"><CreditCard size={14} /> Detalle de artículos</h3>
+                    <div className="space-y-3">
+                      {selectedOrder.items.map((item: any) => (
+                        <div key={item.id} className="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-100">
+                          <div>
+                            <p className="font-bold text-sm">{item.product.name}</p>
+                            <p className="text-[11px] text-slate-400">Var: {item.variant?.name || 'Única'} | Cant: {item.quantity}</p>
+                          </div>
+                          <span className="font-black">{formatPrice(Number(item.priceAtPurchase) * Number(item.quantity))}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-6 flex justify-between items-center bg-slate-900 text-white p-6 rounded-2xl shadow-xl">
+                      <span className="font-black uppercase tracking-widest text-sm opacity-80">Total del pedido</span>
+                      <span className="text-2xl font-black">{formatPrice(selectedOrder.total)}</span>
+                    </div>
+                  </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        ))}
+      </div>
+    ))}
       </div>
           {showCancelModal && (
       <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-[100] p-4">

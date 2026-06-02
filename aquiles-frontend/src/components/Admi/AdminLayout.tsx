@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, ShoppingBag, FolderOpen, ReceiptText, Percent, Image, ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, FolderOpen, ReceiptText, Percent, Image, ChevronLeft, ChevronRight, LogOut, Menu, X} from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import fondoMarca from '../../assets/fondo-footer.png';
@@ -10,6 +10,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/admin' },
@@ -20,45 +21,60 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     { name: 'Banners Inicio', icon: <Image size={20} />, path: '/admin/banners' },
   ];
 
-  return (
+ return (
     <div className="min-h-screen bg-slate-100 flex">
+      {/* SIDEBAR: Ahora oculto en móvil por defecto, fijo en escritorio */}
       <aside 
-        className={`relative text-white flex flex-col justify-between transition-all duration-300 border-r border-slate-800 sticky top-0 h-screen z-40 bg-cover bg-center ${isCollapsed ? 'w-20' : 'w-64'}`}
+        className={`fixed inset-y-0 left-0 z-50 text-white flex flex-col justify-between transition-all duration-300 border-r border-slate-800 bg-cover bg-center 
+        ${isMobileMenuOpen ? 'translate-x-0 w-64' : '-translate-x-full'} 
+        md:translate-x-0 md:sticky md:top-0 md:h-screen 
+        ${isCollapsed ? 'md:w-20' : 'md:w-64'}`}
         style={{ backgroundImage: `url(${fondoMarca})` }} 
       >
-       <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 to-slate-950/80 z-0"></div>
-        <div className="relative z-10 flex flex-col flex-1">
-          <div className="h-24 flex items-center justify-between px-4 border-b border-white/10">
-            {!isCollapsed && <img src={logoAquiles} alt="Aquiles" className="h-12 object-contain" />}
-            <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 rounded-lg bg-white/10 hover:bg-yellow-400/20">
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 to-slate-950/80 z-0"></div>
+        
+        {/* Header del Sidebar */}
+        <div className="relative z-10">
+          <div className="h-20 flex items-center justify-between px-4 border-b border-white/10">
+            {!isCollapsed && <img src={logoAquiles} alt="Aquiles" className="h-10 object-contain" />}
+            {/* Botón de cerrar para móvil */}
+            <button onClick={() => setIsMobileMenuOpen(false)} className="md:hidden p-2"><X size={24} /></button>
+            {/* Botón de colapsar para escritorio */}
+            <button onClick={() => setIsCollapsed(!isCollapsed)} className="hidden md:block p-2 rounded-lg bg-white/10 hover:bg-yellow-400/20">
               {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
             </button>
           </div>
+
           <nav className="p-3 space-y-1">
-            {menuItems.map((item) => {
-              const isActive = location.pathname === item.path;
-              return (
-                <Link key={item.path} to={item.path} className={`flex items-center gap-3 h-11 px-3 rounded-xl font-bold text-sm transition-all ${isActive ? 'bg-yellow-400 text-slate-950' : 'text-slate-300 hover:text-yellow-400 hover:bg-white/5'}`}>
-                  {item.icon}
-                  {!isCollapsed && <span>{item.name}</span>}
-                </Link>
-              );
-            })}
+            {menuItems.map((item) => (
+              <Link key={item.path} to={item.path} onClick={() => setIsMobileMenuOpen(false)} className={`flex items-center gap-3 h-11 px-3 rounded-xl font-bold text-sm transition-all ${location.pathname === item.path ? 'bg-yellow-400 text-slate-950' : 'text-slate-300 hover:text-yellow-400 hover:bg-white/5'}`}>
+                {item.icon}
+                {(!isCollapsed || isMobileMenuOpen) && <span>{item.name}</span>}
+              </Link>
+            ))}
           </nav>
         </div>
+
         <div className="relative z-10 p-4 border-t border-white/10">
           <button onClick={() => { logout(); navigate('/'); }} className="w-full flex items-center gap-3 text-red-400 hover:text-red-300 font-bold">
-            <LogOut size={20} /> {!isCollapsed && "Cerrar Sesión"}
+            <LogOut size={20} /> {(!isCollapsed || isMobileMenuOpen) && "Cerrar Sesión"}
           </button>
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col shadow-[-10px_0_30px_rgba(0,0,0,0.2)] z-10 bg-slate-50">
-        <header className="h-20 bg-white border-b border-slate-200 flex items-center px-8 justify-between">
-          <h2 className="font-bold text-slate-500 uppercase">Administración</h2>
-          <Link to="/" className="text-xs font-bold border px-3 py-1.5 rounded-lg hover:bg-slate-100">Ver Tienda</Link>
+      {/* Overlay para móvil cuando el menú está abierto */}
+      {isMobileMenuOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setIsMobileMenuOpen(false)} />}
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0 z-10 bg-slate-50">
+        <header className="h-20 bg-white border-b border-slate-200 flex items-center px-4 md:px-8 justify-between sticky top-0 z-30">
+          <div className="flex items-center gap-3">
+             <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 text-slate-600"><Menu size={24} /></button>
+             <h2 className="font-bold text-slate-500 uppercase">Administración</h2>
+          </div>
+          <Link to="/" className="text-xs font-bold border px-3 py-1.5 rounded-lg hover:bg-slate-100 whitespace-nowrap">Ver Tienda</Link>
         </header>
-        <main className="p-8">{children}</main>
+        <main className="p-4 md:p-8">{children}</main>
       </div>
     </div>
   );

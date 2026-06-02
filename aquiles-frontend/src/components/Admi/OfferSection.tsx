@@ -18,12 +18,14 @@ export const OfferSection = ({
         Promociones
       </h3>
       
-      <label className="flex items-center gap-3 cursor-pointer p-1">
+      {/* Aumentamos el padding del label para que el área de clic sea más grande en móvil */}
+      <label className="flex items-center gap-3 cursor-pointer p-2 rounded-xl hover:bg-slate-50 transition-colors">
         <input
           type="checkbox"
           checked={isOffer}
           onChange={(e) => setIsOffer(e.target.checked)}
-          className="w-4 h-4 rounded text-slate-900 focus:ring-slate-900 border-slate-300"
+          // Aumentamos ligeramente el tamaño del checkbox para facilitar el toque
+          className="w-5 h-5 rounded text-slate-900 focus:ring-slate-900 border-slate-300 cursor-pointer"
         />
         <span className="text-xs font-bold text-slate-700 uppercase">
           Activar precio de liquidación
@@ -41,7 +43,8 @@ export const OfferSection = ({
             placeholder="Ej: 15000"
             value={offerPrice}
             onChange={(e) => setOfferPrice(e.target.value)}
-            className="w-full border border-slate-200 rounded-xl py-2.5 px-3 outline-none focus:border-slate-400 text-sm font-black text-red-500 bg-red-50/20"
+            // Ajuste a text-base en móvil para evitar zoom de iOS
+            className="w-full border border-slate-200 rounded-xl py-3 px-4 outline-none focus:border-slate-400 text-base sm:text-sm font-black text-red-500 bg-red-50/20"
           />
         </div>
       )}

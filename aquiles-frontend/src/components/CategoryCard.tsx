@@ -2,14 +2,15 @@ interface CategoryCardProps {
   name: string;
   image: string;
 }
-
 export const CategoryCard = ({ name, image }: CategoryCardProps) => {
   return (
-    // Agregamos p-2 y bg-white para dar efecto de "marco blanco"
-    <div className="group relative bg-white border border-slate-200 rounded-3xl shadow-sm hover:shadow-2xl hover:border-slate-300 transition-all duration-300 overflow-hidden cursor-pointer flex flex-col p-3 h-full">
+    // Ajuste de padding y bordes para móvil
+    <div className="group relative bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300 overflow-hidden cursor-pointer flex flex-col p-2 h-full">
       
-      {/* Contenedor de imagen con altura fija mayor */}
-      <div className="h-64 rounded-2xl overflow-hidden bg-slate-100">
+      {/* CAMBIO: h-40 en móvil (más compacto) 
+        h-64 solo en pantallas md (tablets/PC) 
+      */}
+      <div className="h-40 md:h-64 rounded-xl overflow-hidden bg-slate-100">
         <img 
           src={image} 
           alt={name} 
@@ -17,9 +18,9 @@ export const CategoryCard = ({ name, image }: CategoryCardProps) => {
         />
       </div>
       
-      {/* Nombre: con el grupo activo sube */}
-      <div className="p-4 flex items-center justify-center bg-white transition-all duration-300 group-hover:-translate-y-1">
-        <h4 className="text-center font-black text-slate-800 text-lg uppercase tracking-tight group-hover:text-aquiles-primary transition-colors">
+      {/* Ajuste de padding de texto para mejor lectura en móviles */}
+      <div className="p-3 md:p-4 flex items-center justify-center bg-white transition-all duration-300 group-hover:-translate-y-1">
+        <h4 className="text-center font-black text-slate-800 text-sm md:text-lg uppercase tracking-tight group-hover:text-yellow-600 transition-colors">
           {name}
         </h4>
       </div>

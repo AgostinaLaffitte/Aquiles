@@ -75,73 +75,78 @@ export const Checkout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 md:py-12">
+    <div className="min-h-screen bg-slate-50 py-6 md:py-12">
       <div className="container mx-auto px-4 max-w-6xl">
-        <Link to="/productos" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors mb-6 group">
-          <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-          Volver al catálogo
+        <Link to="/productos" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors mb-4">
+          <ChevronLeft size={16} /> Volver
         </Link>
 
-        <h1 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight italic mb-8">
-          Finalizar Pedido
-        </h1>
+        <h1 className="text-2xl font-black text-slate-900 uppercase italic mb-6">Finalizar Pedido</h1>
 
-        {/* Mensaje de error visual */}
         {errorMessage && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl flex items-center gap-3 text-sm font-bold animate-in fade-in">
-            <AlertCircle size={20} />
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl flex items-center gap-3 text-sm font-bold">
+            <AlertCircle size={20} className="shrink-0" />
             {errorMessage}
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Cambiamos el orden en mobile: Resumen primero o después dependiendo de tu prioridad. 
+            Aquí dejamos el formulario primero para asegurar la conversión */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
           <form onSubmit={handleSubmitOrder} className="lg:col-span-7 space-y-6">
             
-            <div className="bg-white p-6 md:p-8 rounded-[24px] border border-slate-100 shadow-sm space-y-4">
-              <h2 className="text-lg font-black text-slate-800 uppercase tracking-tight border-b border-slate-100 pb-3">1. Datos de Contacto</h2>
+            {/* Sección Contacto */}
+            <div className="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+              <h2 className="text-sm font-black text-slate-800 uppercase border-b border-slate-100 pb-2">1. Datos de Contacto</h2>
               <div className="space-y-3">
-                <input type="text" required value={formData.customerName} onChange={(e) => setFormData({...formData, customerName: e.target.value})} placeholder="Nombre Completo" className="w-full h-12 px-4 rounded-xl border border-slate-200" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <input type="email" required value={formData.customerEmail} onChange={(e) => setFormData({...formData, customerEmail: e.target.value})} placeholder="Email" className="w-full h-12 px-4 rounded-xl border border-slate-200" />
-                  <input type="tel" required value={formData.customerPhone} onChange={(e) => setFormData({...formData, customerPhone: e.target.value})} placeholder="Teléfono / WhatsApp" className="w-full h-12 px-4 rounded-xl border border-slate-200" />
-                </div>
+                {/* Usamos text-base en inputs para evitar zoom en iOS */}
+                <input type="text" required value={formData.customerName} onChange={(e) => setFormData({...formData, customerName: e.target.value})} placeholder="Nombre Completo" className="w-full h-12 px-4 rounded-xl border border-slate-200 text-base" />
+                <input type="email" required value={formData.customerEmail} onChange={(e) => setFormData({...formData, customerEmail: e.target.value})} placeholder="Email" className="w-full h-12 px-4 rounded-xl border border-slate-200 text-base" />
+                <input type="tel" required value={formData.customerPhone} onChange={(e) => setFormData({...formData, customerPhone: e.target.value})} placeholder="WhatsApp" className="w-full h-12 px-4 rounded-xl border border-slate-200 text-base" />
               </div>
             </div>
 
-            <div className="bg-white p-6 md:p-8 rounded-[24px] border border-slate-100 shadow-sm space-y-4">
-              <h2 className="text-lg font-black text-slate-800 uppercase tracking-tight border-b border-slate-100 pb-3">2. Método de Entrega</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <label className={`flex flex-col items-center gap-2 p-4 border rounded-2xl cursor-pointer ${formData.deliveryMethod === 'RETIRO' ? 'border-slate-900 bg-slate-50' : 'border-slate-200'}`}>
+            {/* Sección Entrega */}
+            <div className="bg-white p-5 md:p-8 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+              <h2 className="text-sm font-black text-slate-800 uppercase border-b border-slate-100 pb-2">2. Método de Entrega</h2>
+              <div className="grid grid-cols-2 gap-3">
+                <label className={`flex flex-col items-center justify-center gap-2 p-4 border-2 rounded-2xl cursor-pointer transition-all ${formData.deliveryMethod === 'RETIRO' ? 'border-slate-900 bg-slate-50' : 'border-slate-100'}`}>
                   <input type="radio" name="deliveryMethod" className="sr-only" onChange={() => setFormData({...formData, deliveryMethod: 'RETIRO'})} />
-                  <Store size={20} /> <span className="text-sm font-bold">Retiro Local</span>
+                  <Store size={22} /> <span className="text-xs font-bold uppercase">Retiro</span>
                 </label>
-                <label className={`flex flex-col items-center gap-2 p-4 border rounded-2xl cursor-pointer ${formData.deliveryMethod === 'ENVIO' ? 'border-slate-900 bg-slate-50' : 'border-slate-200'}`}>
+                <label className={`flex flex-col items-center justify-center gap-2 p-4 border-2 rounded-2xl cursor-pointer transition-all ${formData.deliveryMethod === 'ENVIO' ? 'border-slate-900 bg-slate-50' : 'border-slate-100'}`}>
                   <input type="radio" name="deliveryMethod" className="sr-only" onChange={() => setFormData({...formData, deliveryMethod: 'ENVIO'})} />
-                  <Truck size={20} /> <span className="text-sm font-bold">Envío a Domicilio</span>
+                  <Truck size={22} /> <span className="text-xs font-bold uppercase">Envío</span>
                 </label>
               </div>
+
               {formData.deliveryMethod === 'ENVIO' && (
-                <div className="space-y-3 pt-2">
-                  <input type="text" required value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} placeholder="Dirección y Altura" className="w-full h-12 px-4 rounded-xl border border-slate-200" />
+                <div className="space-y-3 pt-2 animate-in slide-in-from-top-2">
+                  <input type="text" required value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} placeholder="Dirección y Altura" className="w-full h-12 px-4 rounded-xl border border-slate-200 text-base" />
                   <div className="grid grid-cols-2 gap-3">
-                    <input type="text" required value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} placeholder="Ciudad" className="w-full h-12 px-4 rounded-xl border border-slate-200" />
-                    <input type="text" required value={formData.postalCode} onChange={(e) => setFormData({...formData, postalCode: e.target.value})} placeholder="CP" className="w-full h-12 px-4 rounded-xl border border-slate-200" />
+                    <input type="text" required value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} placeholder="Ciudad" className="w-full h-12 px-4 rounded-xl border border-slate-200 text-base" />
+                    <input type="text" required value={formData.postalCode} onChange={(e) => setFormData({...formData, postalCode: e.target.value})} placeholder="CP" className="w-full h-12 px-4 rounded-xl border border-slate-200 text-base" />
                   </div>
                 </div>
               )}
             </div>
-
-            <button type="submit" disabled={loading} className="w-full h-14 bg-slate-950 text-white font-black uppercase rounded-2xl disabled:opacity-50">
+            
+            {/* Botón Sticky en móvil o simplemente más grande */}
+            <button type="submit" disabled={loading} className="w-full h-14 bg-slate-950 text-white font-black uppercase rounded-2xl shadow-lg hover:bg-slate-800 transition-all active:scale-[0.98]">
               {loading ? 'Procesando...' : 'Confirmar Pedido'}
             </button>
           </form>
 
-          <div className="lg:col-span-5 bg-white p-6 rounded-[24px] border border-slate-100 shadow-sm h-fit">
-            <h2 className="font-black mb-4">Resumen</h2>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span>Subtotal</span> <span>{formatPrice(subtotalItems)}</span></div>
-              {alcanzoMayorista && <div className="text-emerald-600 font-bold">Desc. Mayorista: -{formatPrice(discountMayorista)}</div>}
-              <div className="text-2xl font-black pt-4 border-t mt-2">Total: {formatPrice(totalFinalPrice)}</div>
+          {/* Resumen - Fijo o sticky para que no se pierda al hacer scroll */}
+          <div className="lg:col-span-5 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm sticky top-6">
+            <h2 className="font-black mb-4 uppercase text-sm text-slate-400">Resumen del Pedido</h2>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between font-medium"><span>Subtotal</span> <span>{formatPrice(subtotalItems)}</span></div>
+              {alcanzoMayorista && <div className="text-emerald-600 font-bold flex justify-between"><span>Desc. Mayorista</span> <span>-{formatPrice(discountMayorista)}</span></div>}
+              <div className="text-2xl font-black pt-4 border-t mt-2 flex justify-between items-center">
+                <span>Total</span> <span>{formatPrice(totalFinalPrice)}</span>
+              </div>
             </div>
           </div>
         </div>

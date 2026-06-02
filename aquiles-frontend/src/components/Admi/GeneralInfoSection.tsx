@@ -41,19 +41,20 @@ export const GeneralInfoSection = ({
           <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">
             Código Único {isEditMode ? '(No editable)' : '*'}
           </label>
-          <input
-            type="number"
-            required={!isEditMode}
-            disabled={isEditMode}
-            placeholder="Ej: 4001"
-            value={productId}
-            onChange={(e) => setProductId?.(e.target.value)}
-            className={`w-full border rounded-xl py-2.5 px-3 text-sm font-semibold font-mono ${
-              isEditMode 
-                ? 'border-slate-100 bg-slate-50 text-slate-400 cursor-not-allowed' 
-                : 'border-slate-200 focus:border-slate-400'
-            }`}
-          />
+         <input
+          type="number"
+          required={!isEditMode}
+          disabled={isEditMode}
+          placeholder="Ej: 4001"
+          value={productId}
+          onChange={(e) => setProductId?.(e.target.value)}
+          // CORRECCIÓN: Usamos backticks para que las condiciones se unan bien
+          className={`w-full border rounded-xl py-3 px-4 outline-none text-base sm:text-sm font-semibold transition-all ${
+            isEditMode 
+              ? 'border-slate-100 bg-slate-50 text-slate-400 cursor-not-allowed' 
+              : 'border-slate-200 focus:border-slate-400'
+          }`}
+        />
         </div>
         <div className="sm:col-span-2">
           <label className="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">Nombre del Artículo *</label>
@@ -63,7 +64,7 @@ export const GeneralInfoSection = ({
             placeholder="Ej: Termo de Acero Inoxidable 1L"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full border border-slate-200 rounded-xl py-2.5 px-3 outline-none focus:border-slate-400 text-sm font-semibold"
+            className="w-full border border-slate-200 rounded-xl py-3 px-4 outline-none focus:border-slate-400 text-base sm:text-sm font-semibold"
           />
         </div>
       </div>
@@ -78,7 +79,7 @@ export const GeneralInfoSection = ({
             placeholder="Ej: 18500"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="w-full border border-slate-200 rounded-xl py-2.5 px-3 outline-none focus:border-slate-400 text-sm font-black text-slate-900"
+            className="w-full border border-slate-200 rounded-xl py-3 px-4 outline-none focus:border-slate-400 text-base sm:text-sm font-semibold text-slate-900"
           />
         </div>
         <div>

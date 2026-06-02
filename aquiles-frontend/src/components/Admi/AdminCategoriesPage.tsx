@@ -178,8 +178,42 @@ export const AdminCategoriesPage = () => {
       </div>
 
       {/* Tabla de Categorías */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+     {/* Tabla de Categorías */}
+<div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+  
+  {/* VISTA MÓVIL (Lista de Tarjetas) - Visible solo en < lg */}
+  <div className="block lg:hidden divide-y divide-slate-100">
+    {loading ? (
+      <div className="py-10 text-center text-slate-400 text-sm">Cargando...</div>
+    ) : filteredCategories.length > 0 ? (
+      filteredCategories.map((category) => (
+        <div key={category.id} className="p-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-lg bg-slate-50 border border-slate-100 overflow-hidden flex items-center justify-center">
+              {category.image ? (
+                <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
+              ) : (
+                <ImageIcon size={18} className="text-slate-300" />
+              )}
+            </div>
+            <div>
+              <p className="font-bold text-slate-800 text-sm">{category.name}</p>
+              <p className="text-[10px] text-slate-400 font-mono">#{category.id}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1">
+            <button onClick={() => handleOpenEditModal(category)} className="p-2 text-slate-400 hover:text-aquiles-accent"><Edit2 size={16} /></button>
+            <button onClick={() => setDeletingCategoryId(category.id)} className="p-2 text-slate-400 hover:text-red-500"><Trash2 size={16} /></button>
+          </div>
+        </div>
+      ))
+    ) : (
+      <div className="p-8 text-center text-slate-400 text-sm">No hay categorías.</div>
+    )}
+  </div>
+
+  {/* VISTA ESCRITORIO (Tabla original) - Visible solo en >= lg */}
+        <div className="hidden lg:block overflow-x-auto">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3 text-slate-400">
               <Loader2 size={32} className="animate-spin text-aquiles-primary" />
@@ -198,53 +232,31 @@ export const AdminCategoriesPage = () => {
               <tbody className="divide-y divide-slate-100 text-sm font-medium text-slate-700">
                 {filteredCategories.map((category) => {
                   const isConfirmingDelete = deletingCategoryId === category.id;
-
                   return (
                     <tr key={category.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="py-4 px-6 text-slate-400 font-mono font-bold">#{category.id}</td>
                       <td className="py-4 px-6">
                         <div className="w-12 h-12 rounded-lg bg-slate-50 border border-slate-100 overflow-hidden flex items-center justify-center text-slate-300 shadow-inner">
-                          {category.image ? (
-                            <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
-                          ) : (
-                            <ImageIcon size={18} />
-                          )}
+                          {category.image ? <img src={category.image} alt={category.name} className="w-full h-full object-cover" /> : <ImageIcon size={18} />}
                         </div>
                       </td>
                       <td className="py-4 px-6 font-bold text-slate-800 text-base">{category.name}</td>
                       <td className="py-4 px-6 text-right">
                         <div className="inline-flex items-center gap-1">
-                          <button
-                            onClick={() => handleOpenEditModal(category)}
-                            className="p-2 inline-flex items-center justify-center text-slate-500 hover:text-aquiles-accent hover:bg-slate-100 rounded-lg transition-all"
-                            title="Editar Categoría"
-                          >
+                          <button onClick={() => handleOpenEditModal(category)} className="p-2 inline-flex items-center justify-center text-slate-500 hover:text-aquiles-accent hover:bg-slate-100 rounded-lg transition-all">
                             <Edit2 size={16} />
                           </button>
-
                           {isConfirmingDelete ? (
-                            <div className="flex items-center gap-1 bg-red-50 p-1 rounded-lg border border-red-100 animate-in fade-in zoom-in-95 duration-100">
-                              <button
-                                onClick={() => handleDeleteCategory(category.id)}
-                                disabled={isDeleting}
-                                className="px-2 py-1 text-[10px] font-black uppercase text-red-600 hover:bg-red-200 rounded-md"
-                              >
+                            <div className="flex items-center gap-1 bg-red-50 p-1 rounded-lg border border-red-100">
+                              <button onClick={() => handleDeleteCategory(category.id)} disabled={isDeleting} className="px-2 py-1 text-[10px] font-black uppercase text-red-600 hover:bg-red-200 rounded-md">
                                 {isDeleting ? '...' : 'Sí'}
                               </button>
-                              <button
-                                onClick={() => setDeletingCategoryId(null)}
-                                disabled={isDeleting}
-                                className="px-2 py-1 text-[10px] font-bold uppercase text-slate-400 hover:text-slate-600 rounded-md"
-                              >
+                              <button onClick={() => setDeletingCategoryId(null)} disabled={isDeleting} className="px-2 py-1 text-[10px] font-bold uppercase text-slate-400 hover:text-slate-600 rounded-md">
                                 No
                               </button>
                             </div>
                           ) : (
-                            <button
-                              onClick={() => setDeletingCategoryId(category.id)}
-                              className="p-2 inline-flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                              title="Eliminar Categoría"
-                            >
+                            <button onClick={() => setDeletingCategoryId(category.id)} className="p-2 inline-flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
                               <Trash2 size={16} />
                             </button>
                           )}
@@ -253,12 +265,9 @@ export const AdminCategoriesPage = () => {
                     </tr>
                   );
                 })}
-
                 {filteredCategories.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="text-center py-12 text-slate-400 font-medium">
-                      No se encontraron categorías cargadas.
-                    </td>
+                    <td colSpan={4} className="text-center py-12 text-slate-400 font-medium">No se encontraron categorías cargadas.</td>
                   </tr>
                 )}
               </tbody>
@@ -269,6 +278,7 @@ export const AdminCategoriesPage = () => {
 
       {/* MODAL PARA CREAR O EDITAR */}
       {showModal && (
+      <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 animate-in fade-in zoom-in-95 duration-150">
             <h3 className="text-base font-black text-slate-800 uppercase tracking-tight">
@@ -347,6 +357,7 @@ export const AdminCategoriesPage = () => {
             </form>
           </div>
         </div>
+      </div>
       )}
 
     </div>

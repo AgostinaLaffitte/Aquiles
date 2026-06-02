@@ -30,6 +30,7 @@ export const Register = ({ onSwitch, onSuccess }: RegisterProps) => {
 
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden.');
+      return;
     }
 
     try {
@@ -37,7 +38,7 @@ export const Register = ({ onSwitch, onSuccess }: RegisterProps) => {
       await AuthService.register({ email, password });
       setSuccess(true);
       setTimeout(() => {
-        onSwitch();
+        onSuccess(); 
       }, 2000);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al intentar registrarse.');
@@ -67,9 +68,9 @@ export const Register = ({ onSwitch, onSuccess }: RegisterProps) => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-3">
+     <form onSubmit={handleSubmit} className="space-y-4"> {/* Aumenté un poco el espacio entre campos */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
+          <label className="block text-[10px] md:text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
             Correo Electrónico
           </label>
           <input
@@ -77,12 +78,13 @@ export const Register = ({ onSwitch, onSuccess }: RegisterProps) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="tuemail@aquiles.com"
-            className="w-full border-2 border-gray-100 rounded-2xl py-3 px-4 focus:border-aquiles-primary outline-none transition-colors text-slate-900"
+            // Agregué text-base para evitar zoom en iOS y un poco más de padding
+            className="w-full border-2 border-gray-100 rounded-2xl py-3.5 px-4 text-base md:text-sm focus:border-aquiles-primary outline-none transition-colors text-slate-900"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
+          <label className="block text-[10px] md:text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
             Contraseña
           </label>
           <input
@@ -90,12 +92,12 @@ export const Register = ({ onSwitch, onSuccess }: RegisterProps) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Mínimo 6 caracteres"
-            className="w-full border-2 border-gray-100 rounded-2xl py-3 px-4 focus:border-aquiles-primary outline-none transition-colors text-slate-900"
+            className="w-full border-2 border-gray-100 rounded-2xl py-3.5 px-4 text-base md:text-sm focus:border-aquiles-primary outline-none transition-colors text-slate-900"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
+          <label className="block text-[10px] md:text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
             Confirmar Contraseña
           </label>
           <input
@@ -103,17 +105,17 @@ export const Register = ({ onSwitch, onSuccess }: RegisterProps) => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Repetí tu contraseña"
-            className="w-full border-2 border-gray-100 rounded-2xl py-3 px-4 focus:border-aquiles-primary outline-none transition-colors text-slate-900"
+            className="w-full border-2 border-gray-100 rounded-2xl py-3.5 px-4 text-base md:text-sm focus:border-aquiles-primary outline-none transition-colors text-slate-900"
           />
         </div>
 
         <button
-            type="submit"
-            disabled={loading || success}
-            className="w-full bg-aquiles-primary text-aquiles-neutral font-black uppercase tracking-wider py-4 rounded-2xl hover:bg-aquiles-accent hover:text-white transition-all duration-300 shadow-md disabled:opacity-50 mt-2"
-            >
-            {loading ? 'Creando cuenta...' : 'Registrarme'}
-            </button>
+          type="submit"
+          disabled={loading || success}
+          className="w-full bg-aquiles-primary text-aquiles-neutral font-black uppercase tracking-wider py-4 rounded-2xl hover:bg-aquiles-accent hover:text-white transition-all duration-300 shadow-md disabled:opacity-50 mt-4"
+        >
+          {loading ? 'Creando cuenta...' : 'Registrarme'}
+        </button>
       </form>
 
       <div className="mt-5 text-center border-t border-gray-100 pt-5">

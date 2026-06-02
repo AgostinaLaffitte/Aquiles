@@ -69,23 +69,26 @@ export const Home = () => {
 
       {/* CONTENIDO PRINCIPAL */}
       <main className="max-w-7xl mx-auto px-4 py-16 md:py-24">
-        <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl md:text-4xl font-black text-aquiles-neutral uppercase tracking-tighter italic">
+        <div className="text-center mb-8 md:mb-16">
+          <h2 className="text-2xl md:text-4xl font-black text-slate-800 uppercase tracking-tighter italic">
             Nuestras Secciones
           </h2>
-          <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest font-bold">
+          <p className="text-[10px] md:text-xs text-slate-400 mt-2 uppercase tracking-widest font-bold">
             Explorá el catálogo por tipo de producto
           </p>
-          <div className="w-16 h-1.5 bg-aquiles-primary mx-auto mt-4 rounded-full"></div>
         </div>
         
-        {/* GRILLA DE CATEGORÍAS ENLAZADAS */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+              {/* grid-cols-2: En móviles (default) muestra 2 columnas.
+          md:grid-cols-4: En escritorio (md+) muestra 4 columnas.
+          gap-4: Espacio pequeño en móvil para no perder espacio.
+          md:gap-8: Espacio grande en escritorio.
+        */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-8">
           {categories.map(cat => (
             <Link 
               key={cat.id} 
               to={`/productos?category=${cat.id}`}
-              className="block h-full" // Quitamos la clase group de aquí
+              className="block h-full"
             >
               <CategoryCard name={cat.name} image={cat.image} />
             </Link>

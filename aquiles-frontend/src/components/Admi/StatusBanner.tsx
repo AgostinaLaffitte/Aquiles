@@ -20,7 +20,7 @@ export const StatusBanner = ({ type, message }: StatusBannerProps) => {
       ) : (
         <AlertCircle className="text-rose-500 shrink-0 mt-0.5" size={18} />
       )}
-      <div className="text-xs font-semibold">{message}</div>
+     <div className="text-sm font-semibold leading-relaxed">{message}</div>
     </div>
   );
 };

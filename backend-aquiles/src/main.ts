@@ -9,14 +9,16 @@ import * as express from 'express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // 1. Configurar CORS
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-  app.enableCors({
-    origin: frontendUrl,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-  });
+ const allowedOrigins = [
+  'https://aquiles-three.vercel.app', // Tu frontend en producción
+  'http://localhost:5173'             // Tu frontend local
+];
 
+app.enableCors({
+  origin: allowedOrigins,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+});
   // 2. Configurar Pipes Globales
   app.useGlobalPipes(new ValidationPipe({ 
     whitelist: true, 
@@ -29,6 +31,6 @@ async function bootstrap() {
   await app.listen(port);
   
   
-  console.log(` CORS habilitado para: ${frontendUrl}`);
+  console.log(` CORS habilitado para: ${allowedOrigins.join(', ')}`);
 }
 bootstrap();

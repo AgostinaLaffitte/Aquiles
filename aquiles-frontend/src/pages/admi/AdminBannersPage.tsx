@@ -10,7 +10,6 @@ export const AdminBannersPage = () => {
   const [file, setFile] = useState<File | null>(null);
   const [link, setLink] = useState('');
   const [order, setOrder] = useState('0');
-  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -131,7 +130,7 @@ export const AdminBannersPage = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start px-4">
           
           {/* FORMULARIO */}
           <form onSubmit={handleSubmit} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
@@ -204,57 +203,46 @@ export const AdminBannersPage = () => {
           </form>
 
           {/* LISTADO */}
-          <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-            <h3 className="text-base font-black text-aquiles-neutral uppercase tracking-tight border-b border-slate-100 pb-2 mb-4">
-              Carrusel de Banners Activos ({banners.length})
-            </h3>
+              <div className="lg:col-span-2 bg-white p-5 md:p-6 rounded-3xl border border-slate-100 shadow-sm">
+        <h3 className="text-base font-black text-slate-800 uppercase tracking-tight border-b border-slate-100 pb-2 mb-4">
+          Banners Activos ({banners.length})
+        </h3>
 
-            {loading ? (
-              <p className="text-center py-8 text-sm text-slate-400 font-bold uppercase tracking-wider animate-pulse">Cargando...</p>
-            ) : banners.length === 0 ? (
-              <p className="text-center py-8 text-sm text-slate-400">No hay banners subidos en el sistema.</p>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {banners.map((banner) => (
-                  <div key={banner.id} className="border border-slate-100 bg-slate-50 rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between">
-                    <div className="h-32 w-full bg-slate-200 relative">
-                      <img 
-                        src={banner.imageUrl} 
-                        alt={banner.title || 'Preview'} 
-                        className="w-full h-full object-cover"
-                      />
-                      <span className="absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
-                        Orden: {banner.order ?? 0}
-                      </span>
-                    </div>
-
-                    <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
-                      <div>
-                        <h4 className="font-bold text-slate-800 text-sm truncate">
-                          {banner.title || <span className="text-slate-400 italic font-medium text-xs">Banner publicitario (Solo Imagen)</span>}
-                        </h4>
-                        {banner.link && (
-                          <p className="text-[11px] text-slate-400 truncate mt-0.5 flex items-center gap-1">
-                            <Link2 size={12} /> {banner.link}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="pt-2 border-t border-slate-200/60 flex justify-end">
-                        <button
-                           onClick={() => confirmDelete(banner.id)}
-                          className="flex items-center gap-1.5 px-3 h-8 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
-                        >
-                          <Trash2 size={13} />
-                          Eliminar
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+        {/* Ajuste de Grid para mobile */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {banners.map((banner) => (
+            <div key={banner.id} className="border border-slate-100 bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              {/* Imagen con aspect-ratio para que no se corte en móvil */}
+              <div className="relative aspect-video w-full bg-slate-100">
+                <img 
+                  src={banner.imageUrl} 
+                  alt={banner.title || 'Banner'} 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-2 left-2 bg-slate-900/80 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                  Orden: {banner.order ?? 0}
+                </div>
               </div>
-            )}
-          </div>
+
+              <div className="p-4">
+                <h4 className="font-bold text-slate-800 text-sm truncate">{banner.title || 'Banner sin título'}</h4>
+                {banner.link && (
+                  <p className="text-[11px] text-slate-400 truncate mt-1 flex items-center gap-1">
+                    <Link2 size={12} /> {banner.link}
+                  </p>
+                )}
+                
+                <button
+                  onClick={() => confirmDelete(banner.id)}
+                  className="w-full mt-4 flex items-center justify-center gap-2 px-3 h-10 text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors"
+                >
+                  <Trash2 size={14} /> Eliminar
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
         </div>
       </div>

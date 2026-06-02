@@ -1,6 +1,6 @@
 // src/pages/AdminProductsPage.tsx
 import { useState, useEffect } from 'react';
-import { Search, Plus, Edit2, Trash2, Layers, FolderOpen, Loader2, AlertCircle,CheckCircle2 } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, FolderOpen, Loader2, AlertCircle,CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import api from '../../api/axiosConfig'; 
 import type { Product } from '../../types/product';
@@ -24,6 +24,8 @@ export const AdminProductsPage = () => {
   useEffect(() => {
     fetchProducts();
   }, []);
+
+ 
 
   const fetchProducts = async () => {
     try {
@@ -106,112 +108,96 @@ export const AdminProductsPage = () => {
         <Search className="absolute right-4 top-3.5 text-slate-400" size={18} />
       </div>
 
-      {/* TABLA DE PRODUCTOS REALES */}
+    
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          {loading ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-3 text-slate-400">
-              <Loader2 size={32} className="animate-spin text-aquiles-primary" />
-              <span className="text-sm font-medium">Conectando con la base de datos...</span>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-3 text-slate-400">
+            <Loader2 size={32} className="animate-spin text-aquiles-primary" />
+            <span className="text-sm font-medium">Conectando con la base de datos...</span>
+          </div>
+        ) : (
+          <div className="w-full">
+            {/* Encabezados - Se ocultan en mobile */}
+            <div className="hidden md:grid grid-cols-6 bg-slate-50 border-b border-slate-100 text-slate-400 font-bold text-[11px] uppercase tracking-wider p-4">
+              <div className="col-span-1">Código</div>
+              <div className="col-span-1">Producto</div>
+              <div className="col-span-1">Categorías</div>
+              <div className="col-span-1">Precio</div>
+              <div className="col-span-1">Stock</div>
+              <div className="col-span-1 text-right">Acciones</div>
             </div>
-          ) : (
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold text-[11px] uppercase tracking-wider">
-                  <th className="py-4 px-6">Código (ID)</th>
-                  <th className="py-4 px-6">Producto</th>
-                  <th className="py-4 px-6">Categorías</th>
-                  <th className="py-4 px-6">Precio Base</th>
-                  <th className="py-4 px-6">Variantes / Stock Total</th>
-                  <th className="py-4 px-6 text-right">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-sm font-medium text-slate-700">
-                {filteredProducts.map((product) => {
-                  const totalStock = product.variants?.reduce((acc, curr) => acc + curr.stock, 0) || 0;
-                  const isConfirmingDelete = deletingProductId === product.id;
 
-                  return (
-                    <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="py-4 px-6 text-slate-400 font-mono font-bold">#{product.id}</td>
-                      <td className="py-4 px-6 font-bold text-slate-800">{product.name}</td>
-                      <td className="py-4 px-6">
-                        <div className="flex flex-wrap gap-1">
-                          {product.categories?.map(cat => (
-                            <span key={cat.id} className="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap">
-                              {cat.name}
-                            </span>
-                          ))}
-                          {product.categories?.length === 0 && (
-                            <span className="text-xs text-slate-400 italic">Sin categoría</span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="py-4 px-6 font-black text-slate-900">${product.price.toLocaleString('es-AR')}</td>
-                      <td className="py-4 px-6">
-                        <div className="flex flex-col gap-1">
-                          <span className="text-xs text-slate-500 flex items-center gap-1">
-                            <Layers size={12} /> {product.variants?.length || 0} variantes
-                          </span>
-                          <span className={`text-xs font-black ${totalStock > 0 ? 'text-emerald-600' : 'text-red-500'}`}>
-                            {totalStock > 0 ? `${totalStock} unidades disp.` : 'Sin stock'}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        <div className="inline-flex items-center gap-1">
-                          <Link
-                            to={`/admin/productos/editar/${product.id}`}
-                            className="p-2 inline-flex items-center justify-center text-slate-500 hover:text-aquiles-accent hover:bg-slate-100 rounded-lg transition-all"
-                            title="Editar Producto"
+            {/* Listado de Productos */}
+            <div className="flex flex-col gap-4 py-4 bg-slate-50/80 rounded-2xl p-2">
+              {filteredProducts.map((product) => {
+                const totalStock = product.variants?.reduce((acc, curr) => acc + curr.stock, 0) || 0;
+                const isConfirmingDelete = deletingProductId === product.id;
+
+                return (
+                  <div key={product.id} className="grid md:grid-cols-6 items-center p-5 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                    
+                    {/* Código e ID - Visible siempre */}
+                    <div className="col-span-1 text-slate-400 font-mono font-bold text-xs">#{product.id}</div>
+                    
+                    {/* Nombre - Visible siempre */}
+                    <div className="col-span-1 font-bold text-slate-800 text-sm">{product.name}</div>
+                    
+                    {/* Categorías - Ocultas o ajustadas en móvil */}
+                    <div className="col-span-1 flex flex-wrap gap-1">
+                      {product.categories?.map(cat => (
+                        <span key={cat.id} className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-bold">{cat.name}</span>
+                      ))}
+                    </div>
+
+                    {/* Precio - Visible siempre */}
+                    <div className="col-span-1 font-black text-slate-900">${product.price.toLocaleString('es-AR')}</div>
+
+                    {/* Stock - Visible siempre */}
+                    <div className="col-span-1 text-xs font-black text-slate-500">
+                      {totalStock > 0 ? `${totalStock} unidades` : 'Sin stock'}
+                    </div>
+
+                    {/* Acciones */}
+                    <div className="col-span-1 text-right flex justify-end items-center gap-1">
+                      <Link
+                        to={`/admin/productos/editar/${product.id}`}
+                        className="p-2 text-slate-500 hover:text-aquiles-accent hover:bg-slate-100 rounded-lg transition-all"
+                      >
+                        <Edit2 size={16} />
+                      </Link>
+
+                      {isConfirmingDelete ? (
+                        <div className="flex items-center gap-1 bg-red-50 p-1 rounded-lg border border-red-100 animate-in fade-in zoom-in-95 duration-100">
+                          <button
+                            onClick={() => handleDeleteProduct(product.id)}
+                            disabled={isDeleting}
+                            className="px-2 py-1 text-[10px] font-black uppercase text-red-600 hover:bg-red-200 rounded-md transition-colors"
                           >
-                            <Edit2 size={16} />
-                          </Link>
-
-                          {/* FLUJO DE ELIMINACIÓN SEGURO */}
-                          {isConfirmingDelete ? (
-                            <div className="flex items-center gap-1 bg-red-50 p-1 rounded-lg border border-red-100 animate-in fade-in zoom-in-95 duration-100">
-                              <button
-                                onClick={() => handleDeleteProduct(product.id)}
-                                disabled={isDeleting}
-                                className="px-2 py-1 text-[10px] font-black uppercase text-red-600 hover:bg-red-200 rounded-md transition-colors"
-                              >
-                                {isDeleting ? 'Borrando...' : 'Sí, borrar'}
-                              </button>
-                              <button
-                                onClick={() => setDeletingProductId(null)}
-                                disabled={isDeleting}
-                                className="px-2 py-1 text-[10px] font-bold uppercase text-slate-400 hover:text-slate-600 rounded-md transition-colors"
-                              >
-                                No
-                              </button>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => setDeletingProductId(product.id)}
-                              className="p-2 inline-flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                              title="Eliminar Producto"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          )}
+                            {isDeleting ? 'Borrando...' : 'Sí, borrar'}
+                          </button>
+                          <button
+                            onClick={() => setDeletingProductId(null)}
+                            disabled={isDeleting}
+                            className="px-2 py-1 text-[10px] font-bold uppercase text-slate-400 hover:text-slate-600 rounded-md transition-colors"
+                          >
+                            No
+                          </button>
                         </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-
-                {filteredProducts.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="text-center py-12 text-slate-400 font-medium">
-                      No hay productos cargados en tu base de datos o ninguno coincide con la búsqueda.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          )}
-        </div>
+                      ) : (
+                        <button
+                          onClick={() => setDeletingProductId(product.id)}
+                          className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
     </div>
