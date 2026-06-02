@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { AuthModal } from './Auth/AuthModal'; 
 import fondoMarca from '../assets/fondo-footer.png';
 import logoAquiles from '../assets/logoAquiles.png';
-import { Search, ShoppingCart, User, LogOut, Menu, X } from 'lucide-react';
+import { Search, ShoppingCart, User, LogOut, Menu, X, LayoutDashboard } from 'lucide-react';
 
 export const Header = () => {
   const { user, logout } = useAuth();
@@ -14,6 +14,9 @@ export const Header = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Verificamos si es admin (ajusta 'ADMIN' según el valor que recibas en tu objeto user)
+  const isAdmin = user?.role === 'ADMIN';
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +35,7 @@ export const Header = () => {
       
       <div className="relative z-10 w-full px-4 md:px-12 h-20 md:h-24 flex items-center justify-between gap-4">
         
+        {/* Lado Izquierdo: Menú, Logo y Navegación */}
         <div className="flex items-center gap-3">
           <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 text-white hover:bg-slate-800 rounded-lg transition-colors">
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -43,9 +47,15 @@ export const Header = () => {
             <Link to="/" className="hover:text-yellow-400">Inicio</Link>
             <Link to="/productos" className="hover:text-yellow-400">Productos</Link>
             <Link to="/ayuda" className="hover:text-yellow-400">Ayuda</Link>
+            {isAdmin && (
+              <Link to="/admin" className="text-yellow-400 flex items-center gap-1 hover:text-white transition-colors">
+                <LayoutDashboard size={14} /> Panel Admin
+              </Link>
+            )}
           </nav>
         </div>
 
+        {/* Lado Derecho: Buscador y Acciones */}
         <div className="flex items-center gap-3 md:gap-6">
           <form onSubmit={handleSearchSubmit} className="hidden md:block relative w-64 lg:w-96">
             <input 
@@ -62,10 +72,10 @@ export const Header = () => {
             {user ? (
               <div className="hidden md:flex items-center gap-3 bg-slate-900/50 px-3 py-1.5 rounded-full border border-slate-800">
                 <span className="text-[10px] truncate max-w-[80px]">{user.email}</span>
-                <button onClick={logout} className="text-red-400"><LogOut size={14} /></button>
+                <button onClick={logout} className="text-red-400 hover:text-red-300 transition-colors"><LogOut size={14} /></button>
               </div>
             ) : (
-              <button onClick={() => setIsAuthModalOpen(true)} className="hidden md:flex items-center gap-2 text-xs font-bold uppercase hover:text-yellow-400">
+              <button onClick={() => setIsAuthModalOpen(true)} className="hidden md:flex items-center gap-2 text-xs font-bold uppercase hover:text-yellow-400 transition-colors">
                 <User size={16} /> Ingresar
               </button>
             )}
@@ -98,6 +108,13 @@ export const Header = () => {
             <Link to="/" onClick={() => setIsMenuOpen(false)}>Inicio</Link>
             <Link to="/productos" onClick={() => setIsMenuOpen(false)}>Productos</Link>
             <Link to="/ayuda" onClick={() => setIsMenuOpen(false)}>Ayuda</Link>
+            
+            {isAdmin && (
+              <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="text-yellow-400 flex items-center gap-2">
+                <LayoutDashboard size={16} /> Panel Admin
+              </Link>
+            )}
+            
             {user ? (
               <button onClick={() => { logout(); setIsMenuOpen(false); }} className="text-left text-red-400">Cerrar Sesión</button>
             ) : (
