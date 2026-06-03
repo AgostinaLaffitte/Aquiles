@@ -6,15 +6,7 @@ import { ConfigService } from '@nestjs/config/dist/config.service';
 
 @Injectable()
 export class CloudinaryService {
- constructor(private configService: ConfigService) {
-    console.log("DEBUG CLOUDINARY_NAME:", process.env.CLOUDINARY_NAME);
-    // Aseguramos que la config se aplique cada vez que se inyecta
-    cloudinary.config({
-      cloud_name: this.configService.get<string>('CLOUDINARY_NAME'),
-      api_key: this.configService.get<string>('CLOUDINARY_API_KEY'),
-      api_secret: this.configService.get<string>('CLOUDINARY_API_SECRET'),
-    });
-  }
+
   
   
 
