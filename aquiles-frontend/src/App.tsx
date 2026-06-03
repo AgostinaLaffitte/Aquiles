@@ -13,7 +13,7 @@ import { AdminDashboard } from './pages/admi/AdminDashboard';
 import { CreateProductPage } from './pages/admi/CreateProductPage';
 import { AdminProductsPage } from './pages/admi/AdminProductsPage';
 import { UpdateProductPage } from './pages/admi/UpdateProductPage';
-import { AdminCategoriesPage } from './components/Admi/AdminCategoriesPage';
+import { AdminCategoriesPage } from './pages/admi/AdminCategoriesPage';
 import { AdminOffersPage } from './pages/admi/AdminOffersPage';
 import { AdminBannersPage } from './pages/admi/AdminBannersPage';
 import { Checkout } from './pages/Checkout';
