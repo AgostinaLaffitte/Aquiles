@@ -211,68 +211,7 @@ export const AdminOffersPage = () => {
         </div>
      
   )}
-      {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-3">
-          <Loader2 size={32} className="animate-spin text-aquiles-primary" />
-          <span className="text-sm font-medium">Sincronizando reglas comerciales...</span>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {promotions.map((promo) => (
-            <div 
-              key={promo.id} 
-              className={`bg-white p-5 rounded-2xl border transition-all relative ${
-                promo.active ? 'border-slate-200 shadow-sm' : 'border-slate-100 opacity-60'
-              }`}
-            >
-              {/* Badge: movido dentro del flujo pero fijado a la derecha */}
-              <div className="flex justify-end mb-3">
-                <div className="text-[9px] font-black px-2 py-1 rounded-lg uppercase flex items-center gap-1 bg-slate-100 text-slate-600">
-                  {promo.type === 'PORCENTAJE' && <Percent size={10} />}
-                  {promo.type === 'CANTIDAD' && <Layers size={10} />}
-                  {promo.type === 'TOTAL_CARRITO' && <ShoppingCart size={10} />}
-                  {promo.type}
-                </div>
-              </div>
-
-              <h3 className="text-base font-black text-slate-800 uppercase leading-tight truncate">{promo.name}</h3>
-              <p className="text-[11px] text-slate-400 mt-1 line-clamp-2 min-h-[30px]">{promo.description || 'Sin descripción.'}</p>
-
-              {/* Alcance */}
-              <div className="mt-3 flex flex-wrap gap-1">
-                {promo.productId && <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">ID PROD: #{promo.productId}</span>}
-                {promo.categoryId && <span className="text-[9px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded">ID CAT: #{promo.categoryId}</span>}
-                {!promo.productId && !promo.categoryId && <span className="text-[9px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">GLOBAL</span>}
-              </div>
-
-              {/* Detalle de regla */}
-              <div className="mt-4 bg-slate-50 rounded-xl p-3 text-[11px] font-bold text-slate-600">
-                {promo.type === 'PORCENTAJE' && <p>Descuento: <span className="text-aquiles-accent">{promo.discountValue}% OFF</span></p>}
-                {promo.type === 'CANTIDAD' && <p>Precio x {promo.minQuantity} uds: <span className="text-emerald-600">${promo.discountValue}</span></p>}
-                {promo.type === 'TOTAL_CARRITO' && <p>Min ${promo.minQuantity}: <span className="text-blue-600">{promo.discountValue}% OFF</span></p>}
-              </div>
-
-              {/* Acciones: Aumenté el tamaño del área de click (h-12) */}
-              <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
-                <button 
-                  onClick={() => handleToggleActive(promo.id, promo.active)} 
-                  className="flex items-center gap-2 text-[11px] font-black uppercase h-10 px-2 rounded-lg hover:bg-slate-50 transition-colors"
-                >
-                  {promo.active ? <ToggleRight size={24} className="text-emerald-600" /> : <ToggleLeft size={24} className="text-slate-400" />}
-                  {promo.active ? 'Activa' : 'Pausada'}
-                </button>
-                
-                <button 
-                  onClick={() => setPromoToDelete(promo.id)} 
-                  className="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg transition-colors"
-                >
-                  <Trash2 size={18} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+     
     
 
       {showModal && (
