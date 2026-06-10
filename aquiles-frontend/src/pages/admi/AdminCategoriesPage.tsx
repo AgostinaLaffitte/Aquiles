@@ -177,7 +177,7 @@ export const AdminCategoriesPage = () => {
         <Search className="absolute right-4 top-3.5 text-slate-400" size={18} />
       </div>
 
-      {/* Tabla de Categorías */}
+      
      {/* Tabla de Categorías */}
 <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
   
@@ -231,6 +231,7 @@ export const AdminCategoriesPage = () => {
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm font-medium text-slate-700">
                 {filteredCategories.map((category) => {
+                  console.log(`Categoría: ${category.name}, Imagen:`, category.image);
                   const isConfirmingDelete = deletingCategoryId === category.id;
                   return (
                     <tr key={category.id} className="hover:bg-slate-50/50 transition-colors">

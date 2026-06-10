@@ -9,8 +9,11 @@ export class CategoriesService {
 
   async create(createCategoryDto: CreateCategoryDto) {
     return this.prisma.category.create({
-      data: createCategoryDto,
-    });
+    data: {
+      name: createCategoryDto.name,
+      image: createCategoryDto.image, // <--- Es vital que esto sea explícito
+    },
+  });
   }
 
   async findAll() {

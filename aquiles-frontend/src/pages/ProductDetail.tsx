@@ -147,7 +147,7 @@ export const ProductDetail = () => {
           Volver al catálogo
         </Link>
 
-        {/* ... (Galería y Info Producto se mantienen igual) */}
+       
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-16 items-start bg-white p-4 md:p-10 rounded-[24px] shadow-sm border border-slate-100 mb-6">
            <div className="space-y-3">
             <div className="aspect-square w-full rounded-2xl overflow-hidden bg-slate-50 relative group">
@@ -166,6 +166,9 @@ export const ProductDetail = () => {
               <h2 className="text-2xl md:text-4xl font-black text-aquiles-neutral uppercase italic">{product.name}</h2>
               <div className="mt-4 flex items-baseline gap-4">
                 <span className="text-3xl font-black text-aquiles-accent">{product.isOffer && product.offerPrice ? formatPrice(product.offerPrice) : formatPrice(product.price)}</span>
+              </div>
+              <div className="mt-6 text-sm text-slate-600 leading-relaxed">
+                <p>{product.description}</p>
               </div>
             </div>
           </div>
